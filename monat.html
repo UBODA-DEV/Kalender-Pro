@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalender</title>
+    <link rel="stylesheet" href="monat.css">
+    <!-- Einbindung des JavaScript-Datei -->
+    <!-- Das <script>-Tag kann an verschiedenen Stellen im HTML-Dokument platziert werden:
+         1. Im <head>-Bereich: Das Skript wird geladen, bevor der Inhalt der Seite vollständig geladen ist.
+         2. Am Ende des <body>-Bereichs: Das Skript wird geladen, nachdem der gesamte Inhalt der Seite geladen ist.
+         3. Mit dem Attribut 'defer' im <head>-Bereich: Das Skript wird geladen, aber erst ausgeführt, nachdem der gesamte Inhalt der Seite geladen ist.
+         4. Mit dem Attribut 'async' im <head>-Bereich: Das Skript wird geladen und ausgeführt, sobald es verfügbar ist, unabhängig davon, ob der Inhalt der Seite vollständig geladen ist.
+    -->
+    <script src="monat.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="relogio">
+            <div class="header-left">
+                <a href="index.html">
+                    <img src="KalendarLogo.png" alt="Ícone do calendário" class="calendar-icon">
+                </a>
+                <div class="time-date">
+                    <div id="clock" class="clock"></div>
+                    <div id="date" class="date"></div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="dropdown">
+                    <button class="dropbtn">Termine</button>
+                    <div class="dropdown-content">
+                        <a href="#" id="neue-termin">Neue Termin</a>
+                        <a href="#" id="bearbeiten">Bearbeiten</a>
+                        <a href="#" id="loeschen">Löschen</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropbtn">Erinnerung</button>
+                    <div class="dropdown-content">
+                        <a href="#" id="neue-erinnerung">Neue Erinnerung</a>
+                        <a href="#" id="bearbeiten">Bearbeiten</a>
+                        <a href="#" id="loeschen">Löschen</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="right-section">
+            <div class="calendar">
+                <div class="calendar-header">
+                    <!-- Auswahl des Monats -->
+                    <select id="month-select" onchange="updateCalendar()">
+                        <option value="0">Januar</option>
+                        <option value="1">Februar</option>
+                        <option value="2">März</option>
+                        <option value="3">April</option>
+                        <option value="4">Mai</option>
+                        <option value="5">Juni</option>
+                        <option value="6">Juli</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">Oktober</option>
+                        <option value="10">November</option>
+                        <option value="11">Dezember</option>
+                    </select>
+                    <!-- Auswahl des Jahres -->
+                    <select id="year-select" onchange="updateCalendar()">
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                        <option value="2025" selected>2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                    </select>
+                    <h4>Hey! Schön das Du da Bist!</h4>
+                </div>
+                <div class="calendar-weekdays">
+                    <div>So</div>
+                    <div>Mo</div>
+                    <div>Di</div>
+                    <div>Mi</div>
+                    <div>Do</div>
+                    <div>Fr</div>
+                    <div>Sa</div>
+                </div>
+                <div class="calendar-days"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="backdrop" onclick="closeAgendaModal()"></div>
+    <div id="agenda-modal" class="agenda-modal">
+        <div class="modal-header" id="selected-date">Data: </div>
+        <div class="time-slot-buttons">
+            <button class="time-slot-button" data-time="6-10">6:00 - 10:00</button>
+            <button class="time-slot-button" data-time="11-15">11:00 - 15:00</button>
+            <button class="time-slot-button" data-time="16-20">16:00 - 20:00</button>
+            <button class="time-slot-button" data-time="21-00">21:00 - 00:00</button>
+        </div>
+        <div class="time-block" id="selected-time-block" style="display: none;">
+            <div class="time-block-header" id="selected-time-header"></div>
+            <ul class="appointments-list"></ul>
+            <div class="appointment-input-area">
+                <input type="text" class="appointment-input" placeholder="Neuer Termin">
+                <button class="add-appointment-button">Hinzufügen</button>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="save-button" onclick="saveAppointment()">Speichern</button>
+            <button class="cancel-button" onclick="closeAgendaModal()">Abbrechen</button>
+        </div>
+    </div>
+</body>
+</html>

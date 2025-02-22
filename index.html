@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="relogio">
+            <div id="clock" class="clock"></div>
+            <div id="date" class="date"></div>
+            <div>
+                <img src="KalendarLogo.png" alt="Relógio" class="clock-image">
+            </div>
+        </div>
+        <div class="right-section">
+            <h1>Hey! Schön das Du da Bist!</h1>
+            <nav class="BT-1">
+                <button aria-label="Visualizar dia">Tag</button>
+                <button onclick="location.href='woche.html'" aria-label="Visualizar semana">Woche</button>
+                <button onclick="location.href='monat.html'" aria-label="Visualizar mês">Monat</button>
+            </nav>
+        </div>
+    </div>
+    <script src="index.js"></script>
+</body>
+
+</html>

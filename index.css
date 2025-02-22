@@ -1,0 +1,105 @@
+/* Setzt den Standardwert für den Rand, den Innenabstand und das Box-Sizing für alle Elemente */
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Roboto;
+    background-color: #9fd3f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    background-color: #bde4fa;
+    width: 80%;
+    height: 80%;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Die .relogio-Klasse stylt einen Abschnitt des Containers */
+.relogio {
+    flex: 2; /* Ermöglicht es dem Abschnitt, zu wachsen und verfügbaren Platz auszufüllen */
+    display: flex; /* Verwendet Flexbox-Layout */
+    flex-direction: column; /* Ordnet Kinder in einer Spalte an */
+    background-color: #c9e8f9; /* Legt die Hintergrundfarbe fest */
+    justify-content: center; /* Zentriert Kinder vertikal */
+    margin-left: 40px; /* Fügt linken Rand hinzu */
+    padding-left: 2%; /* Fügt linken Innenabstand hinzu */
+    padding-right: 2%; /* Fügt rechten Innenabstand hinzu */
+    text-align: left; /* Richtet Text linksbündig aus */
+    box-sizing: border-box; /* Schließt Innenabstand und Rand in die Gesamtbreite und -höhe des Elements ein */
+    min-width: 0; /* Verhindert, dass das Element unter seine Inhaltsgröße schrumpft */
+}
+
+.clock {
+    color: #2f4858;
+    font-size: 25px;
+    font-weight: bold;
+    text-align: left;
+    padding-bottom: 2px;
+    margin-top:60px;
+}
+
+.date {
+    color: #2f4858;
+    font-size: 15px;
+    text-align: left;
+    padding-bottom: 5%;
+}
+
+/* Die .clock-image-Klasse stylt ein Bild der Uhr */
+.clock-image {
+    max-width: 70%; /* Legt die maximale Breite des Bildes auf 70% fest */
+    min-width: 50%; /* Legt die minimale Breite des Bildes auf 50% fest */
+    display: block; /* Stellt das Bild als Blockelement dar */
+    margin: 0 auto; /* Zentriert das Bild horizontal */
+}
+
+.right-section {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding-left: 50px;
+    text-align: left;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.right-section h1 {
+    color: #2f4858;
+    margin-bottom: 20px;
+}
+
+/* Die .BT-1-Klasse stylt einen Abschnitt mit Schaltflächen */
+.BT-1 {
+    display: flex; /* Verwendet Flexbox-Layout */
+    flex-direction: column; /* Ordnet Kinder in einer Spalte an */
+    gap: 10px; /* Fügt Abstand zwischen den Kindern hinzu */
+}
+
+/* Die .BT-1 button-Klasse stylt die Schaltflächen innerhalb des .BT-1-Abschnitts */
+.BT-1 button {
+    background-color: #0077b6; /* Legt die Hintergrundfarbe der Schaltfläche fest */
+    color: white; /* Legt die Textfarbe der Schaltfläche fest */
+    font-size: 16px; /* Legt die Schriftgröße der Schaltfläche fest */
+    padding: 10px 20px; /* Fügt Innenabstand zur Schaltfläche hinzu */
+    border: none; /* Entfernt den Standardrahmen der Schaltfläche */
+    border-radius: 8px; /* Rundet die Ecken der Schaltfläche ab */
+    cursor: pointer; /* Ändert den Mauszeiger in einen Zeiger */
+    transition: background-color 0.3s ease; /* Fügt eine Übergangsanimation für die Hintergrundfarbe hinzu */
+}
+
+/* Die .BT-1 button:hover-Klasse stylt die Schaltflächen, wenn der Mauszeiger darüber schwebt */
+.BT-1 button:hover {
+    background-color: #005f8a; /* Ändert die Hintergrundfarbe der Schaltfläche beim Hover */
+}
