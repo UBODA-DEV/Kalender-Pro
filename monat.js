@@ -36,17 +36,32 @@ function loadAppointments(date) {
             const timeSlots = ['6-10', '11-15', '16-20', '21-00'];
             timeSlots.forEach(slot => {
                 const button = document.querySelector(`.time-slot-button[data-time="${slot}"]`);
-                if (isSlotFull(data, slot)) {
-                    button.classList.add('full');
-                    button.textContent += ' (Voll)';
-                } else {
-                    button.classList.remove('full');
-                    button.textContent = button.textContent.replace(' (Voll)', '');
-                }
+                const appointmentCount = getAppointmentCount(data, slot);
+                updateButtonColor(button, appointmentCount);
             });
         })
         .catch(error => console.error('Fehler beim Laden der Termine:', error));
 }
+
+// Funktion zum Zählen der Termine in einem Slot
+function getAppointmentCount(appointments, slot) {
+    return appointments.filter(app => app.time === slot).length;
+}
+
+// Funktion zum Aktualisieren der Buttonfarbe basierend auf der Anzahl der Termine
+function updateButtonColor(button, count) {
+    // Entfernen aller vorherigen Farbklassen
+    button.classList.remove('green', 'orange', 'red');
+
+    if (count === 1) {
+        button.classList.add('green');
+    } else if (count === 2) {
+        button.classList.add('orange');
+    } else if (count >= 3) {
+        button.classList.add('red');
+    }
+}
+
 // Funktion zum Generieren des Kalenders
 function generateCalendar(month, year) {
     const calendarDays = document.querySelector('.calendar-days');

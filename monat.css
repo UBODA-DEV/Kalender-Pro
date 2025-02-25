@@ -485,6 +485,18 @@ select option:hover {
     background-color: #005f8a;
 }
 
+.time-slot-button.green {
+    background-color: #4CAF50; /* Verde */
+}
+
+.time-slot-button.orange {
+    background-color: #FF9800; /* Laranja */
+}
+
+.time-slot-button.red {
+    background-color: #F44336; /* Vermelho */
+}
+
 /* MONAT Bereich für die Eingabe von Terminen */
 .appointment-input-area {
     display: flex;
