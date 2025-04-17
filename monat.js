@@ -23,8 +23,8 @@ function updateClock() {
 setInterval(updateClock, 1000);
 window.onload = updateClock;
 
- // Funktion zum Überprüfen, ob ein Slot voll ist
- function isSlotFull(appointments, slot) {
+// Funktion zum Überprüfen, ob ein Slot voll ist
+function isSlotFull(appointments, slot) {
     return appointments.filter(app => app.time === slot).length >= 3;
 }
 
@@ -62,7 +62,64 @@ function updateButtonColor(button, count) {
     }
 }
 
+// Funktion zum Laden aller Termine eines Monats und Färben der Kalenderzellen
+function loadMonthAppointments(month, year) {
+    const formattedMonth = (month + 1).toString().padStart(2, '0');
+    const startDate = `${year}-${formattedMonth}-01`;
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    const endDate = `${year}-${formattedMonth}-${lastDay}`;
+    
+    fetch(`http://localhost:3001/appointments?date_gte=${startDate}&date_lte=${endDate}`)
+        .then(response => response.json())
+        .then(data => {
+            // Gruppieren der Termine nach Datum
+            const appointmentsByDate = {};
+            data.forEach(appointment => {
+                if (!appointmentsByDate[appointment.date]) {
+                    appointmentsByDate[appointment.date] = [];
+                }
+                appointmentsByDate[appointment.date].push(appointment);
+            });
+            
+            // Färben der Kalenderzellen
+            colorCalendarCells(appointmentsByDate, month, year);
+        })
+        .catch(error => console.error('Fehler beim Laden der Monats-Termine:', error));
+}
 
+// Funktion zum Färben der Kalenderzellen basierend auf der Anzahl der Termine
+function colorCalendarCells(appointmentsByDate, month, year) {
+    const calendarCells = document.querySelectorAll('.calendar-days table td:not(.other-month)');
+    
+    calendarCells.forEach(cell => {
+        const day = parseInt(cell.textContent);
+        const formattedMonth = (month + 1).toString().padStart(2, '0');
+        const formattedDay = day.toString().padStart(2, '0');
+        const dateString = `${year}-${formattedMonth}-${formattedDay}`;
+        
+        // Entfernen aller vorherigen Farbklassen
+        cell.classList.remove('original-color', 'green', 'orange', 'red');
+        
+        // Wenn es Termine für dieses Datum gibt, Farbe anwenden
+        if (appointmentsByDate[dateString]) {
+            const count = appointmentsByDate[dateString].length;
+            const colorClass = getColorClass(count);
+            cell.classList.add(colorClass);
+        } else {
+            cell.classList.add('original-color');
+        }
+    });
+}
+
+// Funktion zum Aktualisieren des Kalenders nach Änderungen an Terminen
+function updateCalendarColors() {
+    const monthSelect = document.getElementById('month-select');
+    const yearSelect = document.getElementById('year-select');
+    const month = parseInt(monthSelect.value);
+    const year = parseInt(yearSelect.value);
+    
+    loadMonthAppointments(month, year);
+}
 
 // Funktion zum Generieren des Kalenders
 function generateCalendar(month, year) {
@@ -90,266 +147,269 @@ function generateCalendar(month, year) {
             row = table.insertRow();
         }
         cell = row.insertCell();
-                cell.textContent = dayCounter;
-                const currentDay = dayCounter;
-                cell.addEventListener('click', () => openAgendaModal(currentDay, month, year));
-                dayCounter++;
-            }
+        cell.textContent = dayCounter;
+        const currentDay = dayCounter;
+        cell.addEventListener('click', () => openAgendaModal(currentDay, month, year));
+        dayCounter++;
+    }
 
-            while (row.cells.length < 7) {
-                cell = row.insertCell();
-                cell.textContent = nextMonthDay;
-                cell.classList.add('other-month');
-                nextMonthDay++;
-            }
+    while (row.cells.length < 7) {
+        cell = row.insertCell();
+        cell.textContent = nextMonthDay;
+        cell.classList.add('other-month');
+        nextMonthDay++;
+    }
 
-            calendarDays.appendChild(table);
-        }
+    calendarDays.appendChild(table);
+    
+    // Laden der Termine für den aktuellen Monat und Färben der Zellen
+    loadMonthAppointments(month, year);
+}
 
-        // Funktion zum Aktualisieren des Kalenders
-        function updateCalendar() {
-            try {
-                const monthSelect = document.getElementById('month-select');
-                const yearSelect = document.getElementById('year-select');
-                const month = parseInt(monthSelect.value);
-                const year = parseInt(yearSelect.value);
-                generateCalendar(month, year);
-            } catch (error) {
-                console.error("Fehler beim Aktualisieren des Kalenders:", error);
-            }
-        }
+// Funktion zum Aktualisieren des Kalenders
+function updateCalendar() {
+    try {
+        const monthSelect = document.getElementById('month-select');
+        const yearSelect = document.getElementById('year-select');
+        const month = parseInt(monthSelect.value);
+        const year = parseInt(yearSelect.value);
+        generateCalendar(month, year);
+    } catch (error) {
+        console.error("Fehler beim Aktualisieren des Kalenders:", error);
+    }
+}
 
-         // Bestimmt die Farbklasse basierend auf der Anzahl der Termine
-         function getColorClass(count) {
-            if (count === 0) return 'original-color';
-            if (count >= 1 && count <= 4) return 'green';
-            if (count >= 5 && count <= 8) return 'orange';
-            return 'red';
-        }
+// Funktion zum Öffnen des Modals
+function openAgendaModal(day, month, year) {
+    const formattedMonth = (month + 1).toString().padStart(2, '0');
+    selectedDate = `${year}-${formattedMonth}-${day.toString().padStart(2, '0')}`;
+    document.getElementById('selected-date').innerText = `Datum: ${selectedDate}`;
 
-        // Funktion zum Öffnen des Modals
-        function openAgendaModal(day, month, year) {
-            const formattedMonth = (month + 1).toString().padStart(2, '0');
-            selectedDate = `${year}-${formattedMonth}-${day.toString().padStart(2, '0')}`;
-            document.getElementById('selected-date').innerText = `Datum: ${selectedDate}`;
+    // Zurücksetzen des Zustands der Zeitslot-Buttons
+    const timeSlotButtons = document.querySelectorAll('.time-slot-button');
+    timeSlotButtons.forEach(button => {
+        button.classList.remove('full');
+        button.textContent = button.textContent.replace(' (Voll)', '');
+    });
 
-            // Zurücksetzen des Zustands der Zeitslot-Buttons
-            const timeSlotButtons = document.querySelectorAll('.time-slot-button');
-            timeSlotButtons.forEach(button => {
-                button.classList.remove('full');
-                button.textContent = button.textContent.replace(' (Voll)', '');
+    // Laden der vorhandenen Termine
+    loadAppointments(selectedDate);
+
+    document.getElementById('agenda-modal').classList.add('active');
+    document.querySelector('.backdrop').classList.add('active');
+}
+
+// Bestimmt die Farbklasse des datum auf das kalender basiert auf die anzahl von termine in der Angenda Modal
+function getColorClass(count) {
+    if (count === 0) return 'original-color';
+    if (count >= 1 && count <= 4) return 'green';
+    if (count >= 5 && count <= 8) return 'orange';
+    return 'red';
+}
+
+// Funktion zum Auswählen des Zeitfensters
+function selectTimeSlot(event) {
+    selectedTimeSlot = event.target.dataset.time;
+    const timeBlock = document.getElementById('selected-time-block');
+    const timeHeader = document.getElementById('selected-time-header');
+    const appointmentsList = timeBlock.querySelector('.appointments-list');
+
+    timeHeader.textContent = event.target.textContent;
+    appointmentsList.innerHTML = '';
+    timeBlock.style.display = 'block';
+
+    const appointmentInputArea = timeBlock.querySelector('.appointment-input-area');
+    appointmentInputArea.style.display = 'flex';
+
+    fetch(`http://localhost:3001/appointments?date=${selectedDate}&time=${selectedTimeSlot}`)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(appointment => {
+                const listItem = createAppointmentListItem(appointment);
+                appointmentsList.appendChild(listItem);
             });
-
-            // Laden der vorhandenen Termine
-            loadAppointments(selectedDate);
-
-            document.getElementById('agenda-modal').classList.add('active');
-            document.querySelector('.backdrop').classList.add('active');
-        }
-
-             // Bestimmt die Farbklasse basierend auf der Anzahl der Termine
-            function getColorClass(count) {
-            if (count === 0) return 'original-color';
-            if (count >= 1 && count <= 4) return 'green';
-            if (count >= 5 && count <= 8) return 'orange';
-            return 'red';
+            if (appointmentsList.children.length >= 3) {
+                appointmentInputArea.style.display = 'none';
+                alert('Dieser Zeitslot ist voll. Maximal 3 Termine erreicht.');
             }
+        })
+        .catch(error => console.error('Fehler:', error));
+}
 
-        // Funktion zum Auswählen des Zeitfensters
-        function selectTimeSlot(event) {
-            selectedTimeSlot = event.target.dataset.time;
-            const timeBlock = document.getElementById('selected-time-block');
-            const timeHeader = document.getElementById('selected-time-header');
-            const appointmentsList = timeBlock.querySelector('.appointments-list');
+// Hilfsfunktion zum Erstellen eines Termin-Listenelements
+function createAppointmentListItem(appointment) {
+    const listItem = document.createElement('li');
+    listItem.textContent = appointment.description;
 
-            timeHeader.textContent = event.target.textContent;
-            appointmentsList.innerHTML = '';
-            timeBlock.style.display = 'block';
+    const editButton = document.createElement('button');
+    editButton.textContent = 'Bearbeiten';
+    editButton.classList.add('edit-appointment-button');
+    editButton.addEventListener('click', () => editAppointment(listItem, appointment));
 
-            const appointmentInputArea = timeBlock.querySelector('.appointment-input-area');
-            appointmentInputArea.style.display = 'flex';
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Löschen';
+    deleteButton.classList.add('delete-appointment-button');
+    deleteButton.addEventListener('click', () => deleteAppointment(listItem, appointment.id));
 
-            fetch(`http://localhost:3001/appointments?date=${selectedDate}&time=${selectedTimeSlot}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(appointment => {
-                        const listItem = createAppointmentListItem(appointment);
-                        appointmentsList.appendChild(listItem);
-                    });
-                    if (appointmentsList.children.length >= 3) {
-                        appointmentInputArea.style.display = 'none';
-                        alert('Dieser Zeitslot ist voll. Maximal 3 Termine erreicht.');
-                    }
+    listItem.appendChild(editButton);
+    listItem.appendChild(deleteButton);
+
+    return listItem;
+}
+
+// Funktion zum Hinzufügen eines Termins
+function addAppointment() {
+    if (!selectedTimeSlot) {
+        alert('Bitte wählen Sie zuerst einen Zeitslot aus.');
+        return;
+    }
+
+    const timeBlock = document.getElementById('selected-time-block');
+    const appointmentsList = timeBlock.querySelector('.appointments-list');
+    const appointmentInput = timeBlock.querySelector('.appointment-input');
+    const appointmentText = appointmentInput.value.trim();
+
+    if (appointmentText) {
+        if (appointmentsList.children.length < 3) {
+            fetch('http://localhost:3001/appointments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    date: selectedDate,
+                    time: selectedTimeSlot,
+                    description: appointmentText
                 })
-                .catch(error => console.error('Fehler:', error));
+            })
+            .then(response => response.json())
+            .then(data => {
+                const listItem = createAppointmentListItem(data);
+                appointmentsList.appendChild(listItem);
+                appointmentInput.value = '';
+
+                if (appointmentsList.children.length >= 3) {
+                    timeBlock.querySelector('.appointment-input-area').style.display = 'none';
+                    alert('Zeitslot voll. Maximal 3 Termine erreicht.');
+                }
+
+                // Aktualisieren des Zustands des Zeitslot-Buttons
+                const button = document.querySelector(`.time-slot-button[data-time="${selectedTimeSlot}"]`);
+                if (appointmentsList.children.length >= 3) {
+                    button.classList.add('full');
+                    button.textContent += ' (Voll)';
+                }
+                
+                // Aktualisieren der Kalenderfarben
+                updateCalendarColors();
+            })
+            .catch(error => console.error('Fehler:', error));
+        } else {
+            alert('Sie können maximal 3 Termine in diesem Zeitfenster hinzufügen.');
         }
+    } else {
+        alert('Bitte geben Sie einen Termin ein.');
+    }
+}
 
-        // Hilfsfunktion zum Erstellen eines Termin-Listenelements
-        function createAppointmentListItem(appointment) {
-            const listItem = document.createElement('li');
-            listItem.textContent = appointment.description;
-
+// Funktion zum Bearbeiten eines Termins
+function editAppointment(listItem, appointment) {
+    const newText = prompt('Termin bearbeiten:', appointment.description);
+    if (newText && newText !== appointment.description) {
+        fetch(`http://localhost:3001/appointments/${appointment.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                description: newText
+            })
+        })
+        .then(response => response.json())
+        .then(updatedAppointment => {
+            listItem.textContent = updatedAppointment.description;
             const editButton = document.createElement('button');
             editButton.textContent = 'Bearbeiten';
             editButton.classList.add('edit-appointment-button');
-            editButton.addEventListener('click', () => editAppointment(listItem, appointment));
+            editButton.addEventListener('click', () => editAppointment(listItem, updatedAppointment));
 
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Löschen';
             deleteButton.classList.add('delete-appointment-button');
-            deleteButton.addEventListener('click', () => deleteAppointment(listItem, appointment.id));
+            deleteButton.addEventListener('click', () => deleteAppointment(listItem, updatedAppointment.id));
 
             listItem.appendChild(editButton);
             listItem.appendChild(deleteButton);
+            
+            // Aktualisieren der Kalenderfarben (falls sich die Anzahl der Termine geändert hat)
+            updateCalendarColors();
+        })
+        .catch(error => console.error('Fehler beim Bearbeiten des Termins:', error));
+    }
+}
 
-            return listItem;
-        }
+// Funktion zum Löschen eines Termins
+function deleteAppointment(listItem, appointmentId) {
+    fetch(`http://localhost:3001/appointments/${appointmentId}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (response.ok) {
+            const appointmentsList = listItem.parentElement;
+            appointmentsList.removeChild(listItem);
 
-        // Funktion zum Hinzufügen eines Termins
-        function addAppointment() {
-            if (!selectedTimeSlot) {
-                alert('Bitte wählen Sie zuerst einen Zeitslot aus.');
-                return;
+            const appointmentInputArea = document.querySelector('#selected-time-block .appointment-input-area');
+            if (appointmentsList.children.length < 3) {
+                appointmentInputArea.style.display = 'flex';
             }
 
-            const timeBlock = document.getElementById('selected-time-block');
-            const appointmentsList = timeBlock.querySelector('.appointments-list');
-            const appointmentInput = timeBlock.querySelector('.appointment-input');
-            const appointmentText = appointmentInput.value.trim();
-
-            if (appointmentText) {
-                if (appointmentsList.children.length < 3) {
-                    fetch('http://localhost:3001/appointments', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            date: selectedDate,
-                            time: selectedTimeSlot,
-                            description: appointmentText
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        const listItem = createAppointmentListItem(data);
-                        appointmentsList.appendChild(listItem);
-                        appointmentInput.value = '';
-
-                        if (appointmentsList.children.length >= 3) {
-                            timeBlock.querySelector('.appointment-input-area').style.display = 'none';
-                            alert('Zeitslot voll. Maximal 3 Termine erreicht.');
-                        }
-
-                        // Aktualisieren des Zustands des Zeitslot-Buttons
-                        const button = document.querySelector(`.time-slot-button[data-time="${selectedTimeSlot}"]`);
-                        if (appointmentsList.children.length >= 3) {
-                            button.classList.add('full');
-                            button.textContent += ' (Voll)';
-                        }
-                    })
-                    .catch(error => console.error('Fehler:', error));
-                } else {
-                    alert('Sie können maximal 3 Termine in diesem Zeitfenster hinzufügen.');
-                }
-            } else {
-                alert('Bitte geben Sie einen Termin ein.');
+            // Aktualisieren des Zustands des Zeitslot-Buttons
+            const button = document.querySelector(`.time-slot-button[data-time="${selectedTimeSlot}"]`);
+            if (appointmentsList.children.length < 3) {
+                button.classList.remove('full');
+                button.textContent = button.textContent.replace(' (Voll)', '');
             }
+            
+            // Aktualisieren der Kalenderfarben
+            updateCalendarColors();
+        } else {
+            console.error('Fehler beim Löschen des Termins:', response.status);
         }
+    })
+    .catch(error => console.error('Fehler:', error));
+}
 
-        // Funktion zum Bearbeiten eines Termins
-        function editAppointment(listItem, appointment) {
-            const newText = prompt('Termin bearbeiten:', appointment.description);
-            if (newText && newText !== appointment.description) {
-                fetch(`http://localhost:3001/appointments/${appointment.id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        description: newText
-                    })
-                })
-                .then(response => response.json())
-                .then(updatedAppointment => {
-                    listItem.textContent = updatedAppointment.description;
-                    const editButton = document.createElement('button');
-                    editButton.textContent = 'Bearbeiten';
-                    editButton.classList.add('edit-appointment-button');
-                    editButton.addEventListener('click', () => editAppointment(listItem, updatedAppointment));
+// Funktion zum Speichern der Termine
+function saveAppointment() {
+    alert('Termine gespeichert!');
+    closeAgendaModal();
+}
 
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'Löschen';
-                    deleteButton.classList.add('delete-appointment-button');
-                    deleteButton.addEventListener('click', () => deleteAppointment(listItem, updatedAppointment.id));
+// Funktion zum Schließen des Modals
+function closeAgendaModal() {
+    document.getElementById('agenda-modal').classList.remove('active');
+    document.querySelector('.backdrop').classList.remove('active');
+}
 
-                    listItem.appendChild(editButton);
-                    listItem.appendChild(deleteButton);
-                })
-                .catch(error => console.error('Fehler beim Bearbeiten des Termins:', error));
-            }
-        }
+// Event-Listener
+document.addEventListener('DOMContentLoaded', () => {
+    const timeSlotButtons = document.querySelectorAll('.time-slot-button');
+    timeSlotButtons.forEach(button => {
+        button.addEventListener('click', selectTimeSlot);
+    });
 
-        // Funktion zum Löschen eines Termins
-        function deleteAppointment(listItem, appointmentId) {
-            fetch(`http://localhost:3001/appointments/${appointmentId}`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                if (response.ok) {
-                    const appointmentsList = listItem.parentElement;
-                    appointmentsList.removeChild(listItem);
+    const addAppointmentButton = document.querySelector('.add-appointment-button');
+    addAppointmentButton.addEventListener('click', addAppointment);
 
-                    const appointmentInputArea = document.querySelector('#selected-time-block .appointment-input-area');
-                    if (appointmentsList.children.length < 3) {
-                        appointmentInputArea.style.display = 'flex';
-                    }
+    // Inicializar o calendário
+    updateCalendar();
 
-                    // Aktualisieren des Zustands des Zeitslot-Buttons
-                    const button = document.querySelector(`.time-slot-button[data-time="${selectedTimeSlot}"]`);
-                    if (appointmentsList.children.length < 3) {
-                        button.classList.remove('full');
-                        button.textContent = button.textContent.replace(' (Voll)', '');
-                    }
-                } else {
-                    console.error('Fehler beim Löschen des Termins:', response.status);
-                }
-            })
-            .catch(error => console.error('Fehler:', error));
-        }
-        // Funktion zum Speichern der Termine
-        function saveAppointment() {
-            alert('Termine gespeichert!');
-            closeAgendaModal();
-        }
-
-        // Funktion zum Schließen des Modals
-        function closeAgendaModal() {
-            document.getElementById('agenda-modal').classList.remove('active');
-            document.querySelector('.backdrop').classList.remove('active');
-        }
-
-        // Event-Listener
-        document.addEventListener('DOMContentLoaded', () => {
-            const timeSlotButtons = document.querySelectorAll('.time-slot-button');
-            timeSlotButtons.forEach(button => {
-                button.addEventListener('click', selectTimeSlot);
-            });
-
-            const addAppointmentButton = document.querySelector('.add-appointment-button');
-            addAppointmentButton.addEventListener('click', addAppointment);
-
-            // Inicializar o calendário
-            updateCalendar();
-
-            // Adicionar event listeners para os selects de mês e ano
-            const monthSelect = document.getElementById('month-select');
-            const yearSelect = document.getElementById('year-select');
-            monthSelect.addEventListener('change', updateCalendar);
-            yearSelect.addEventListener('change', updateCalendar);
-        });
-
-
+    // Adicionar event listeners para os selects de mês e ano
+    const monthSelect = document.getElementById('month-select');
+    const yearSelect = document.getElementById('year-select');
+    monthSelect.addEventListener('change', updateCalendar);
+    yearSelect.addEventListener('change', updateCalendar);
+});
 
 
 

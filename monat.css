@@ -356,6 +356,23 @@ select option:hover {
     color: #3f99ce;
 }
 
+/* NEUE Farbklassen für Kalenderzellen basierend auf der Anzahl der Termine */
+.calendar-days td.original-color {
+    background-color: #0077b6; /* Standardfarbe für Tage ohne Termine */
+}
+
+.calendar-days td.green {
+    background-color: #4CAF50; /* Grün für 1-4 Termine */
+}
+
+.calendar-days td.orange {
+    background-color: #FF9800; /* Orange für 5-8 Termine */
+}
+
+.calendar-days td.red {
+    background-color: #F44336; /* Rot für 9+ Termine */
+}
+
 /* MONAT Stil für das Modal der Agenda */
 .agenda-modal {
     display: none;
