@@ -62,6 +62,8 @@ function updateButtonColor(button, count) {
     }
 }
 
+
+
 // Funktion zum Generieren des Kalenders
 function generateCalendar(month, year) {
     const calendarDays = document.querySelector('.calendar-days');
@@ -117,6 +119,14 @@ function generateCalendar(month, year) {
             }
         }
 
+         // Bestimmt die Farbklasse basierend auf der Anzahl der Termine
+         function getColorClass(count) {
+            if (count === 0) return 'original-color';
+            if (count >= 1 && count <= 4) return 'green';
+            if (count >= 5 && count <= 8) return 'orange';
+            return 'red';
+        }
+
         // Funktion zum Öffnen des Modals
         function openAgendaModal(day, month, year) {
             const formattedMonth = (month + 1).toString().padStart(2, '0');
@@ -136,6 +146,14 @@ function generateCalendar(month, year) {
             document.getElementById('agenda-modal').classList.add('active');
             document.querySelector('.backdrop').classList.add('active');
         }
+
+             // Bestimmt die Farbklasse basierend auf der Anzahl der Termine
+            function getColorClass(count) {
+            if (count === 0) return 'original-color';
+            if (count >= 1 && count <= 4) return 'green';
+            if (count >= 5 && count <= 8) return 'orange';
+            return 'red';
+            }
 
         // Funktion zum Auswählen des Zeitfensters
         function selectTimeSlot(event) {
