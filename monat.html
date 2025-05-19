@@ -1,0 +1,140 @@
+<!--
+ * Calendar Project - Month View (monat.html)
+ * 
+ * This page provides a monthly view of the calendar, allowing users to:
+ * - Navigate between months and years
+ * - View and manage appointments and reminders
+ * - Interact with a modal to add or edit appointments
+ * 
+ * The interface includes a header with navigation options and a calendar grid
+ * displaying days of the selected month.
+ * 
+ * Language: German (UI elements)
+ * 
+ * Dependencies:
+ * - monat.css for styling
+ * - monat.js for dynamic functionality
+ * - KalendarLogo.png for branding
+ -->
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalender</title>
+    <!-- Link to external CSS file for styling -->
+    <link rel="stylesheet" href="monat.css">
+    <!-- Link to JavaScript file with 'defer' to load after HTML parsing -->
+    <script src="monat.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header section with logo and dropdown menus -->
+        <div class="relogio">
+            <div class="header-left">
+                <!-- Link back to the main page -->
+                <a href="index.html">
+                    <img src="KalendarLogo.png" alt="Calendar Icon" class="calendar-icon">
+                </a>
+                <div class="time-date">
+                    <!-- Dynamic clock and date elements -->
+                    <div id="clock" class="clock"></div>
+                    <div id="date" class="date"></div>
+                </div>
+            </div>
+            <div class="header-right">
+                <!-- Dropdown menu for managing appointments -->
+                <div class="dropdown">
+                    <button class="dropbtn">Termine</button>
+                    <div class="dropdown-content">
+                        <a href="#" id="neue-termin">Neue Termin</a>
+                        <a href="#" id="bearbeiten">Bearbeiten</a>
+                        <a href="#" id="loeschen">Löschen</a>
+                    </div>
+                </div>
+                <!-- Dropdown menu for managing reminders -->
+                <div class="dropdown">
+                    <button class="dropbtn">Erinnerung</button>
+                    <div class="dropdown-content">
+                        <a href="#" id="neue-erinnerung">Neue Erinnerung</a>
+                        <a href="#" id="bearbeiten">Bearbeiten</a>
+                        <a href="#" id="loeschen">Löschen</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Main calendar section -->
+        <div class="right-section">
+            <div class="calendar">
+                <div class="calendar-header">
+                    <!-- Month selection dropdown -->
+                    <select id="month-select" onchange="updateCalendar()">
+                        <option value="0">Januar</option>
+                        <option value="1">Februar</option>
+                        <option value="2">März</option>
+                        <option value="3">April</option>
+                        <option value="4">Mai</option>
+                        <option value="5">Juni</option>
+                        <option value="6">Juli</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">Oktober</option>
+                        <option value="10">November</option>
+                        <option value="11">Dezember</option>
+                    </select>
+                    <!-- Year selection dropdown -->
+                    <select id="year-select" onchange="updateCalendar()">
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                        <option value="2025" selected>2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                    </select>
+                    <!-- Welcome message -->
+                    <h4>Hey! Schön das Du da Bist!</h4>
+                </div>
+                <!-- Weekday headers for the calendar grid -->
+                <div class="calendar-weekdays">
+                    <div>So</div>
+                    <div>Mo</div>
+                    <div>Di</div>
+                    <div>Mi</div>
+                    <div>Do</div>
+                    <div>Fr</div>
+                    <div>Sa</div>
+                </div>
+                <!-- Container for the days of the month -->
+                <div class="calendar-days"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for managing appointments -->
+    <div class="backdrop" onclick="closeAgendaModal()"></div>
+    <div id="agenda-modal" class="agenda-modal">
+        <div class="modal-header" id="selected-date">Data: </div>
+        <!-- Time slot buttons for selecting appointment times -->
+        <div class="time-slot-buttons">
+            <button class="time-slot-button" data-time="6-10">6:00 - 10:00</button>
+            <button class="time-slot-button" data-time="11-15">11:00 - 15:00</button>
+            <button class="time-slot-button" data-time="16-20">16:00 - 20:00</button>
+            <button class="time-slot-button" data-time="21-00">21:00 - 00:00</button>
+        </div>
+        <!-- Selected time block for adding appointments -->
+        <div class="time-block" id="selected-time-block" style="display: none;">
+            <div class="time-block-header" id="selected-time-header"></div>
+            <ul class="appointments-list"></ul>
+            <div class="appointment-input-area">
+                <input type="text" class="appointment-input" placeholder="Neuer Termin">
+                <button class="add-appointment-button">Hinzufügen</button>
+            </div>
+        </div>
+        <!-- Modal footer with save and cancel options -->
+        <div class="modal-footer">
+            <button class="save-button" onclick="saveAppointment()">Speichern</button>
+            <button class="cancel-button" onclick="closeAgendaModal()">Abbrechen</button>
+        </div>
+    </div>
+</body>
+</html>

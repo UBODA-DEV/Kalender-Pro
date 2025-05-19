@@ -1,0 +1,123 @@
+/*
+ * Calendar Project - Main Page Styles (index.css)
+ * 
+ * This stylesheet defines the visual appearance of the main calendar page.
+ * It creates a responsive, card-based layout with a two-column design:
+ * - Left column: Displays clock, date, and application logo
+ * - Right column: Contains welcome message and navigation buttons
+ * 
+ * The color scheme uses various shades of blue to create a calm, professional appearance.
+ * The layout is responsive and centered within the viewport.
+ */
+
+/* Reset default margin, padding, and box-sizing for all elements */
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+/* Body styling - sets font, background color, and centers content */
+body {
+    font-family: Roboto;
+    background-color: #9fd3f2; /* Light blue background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Full viewport height */
+    margin: 0;
+}
+
+/* Main container styling - creates a centered card with rounded corners */
+.container {
+    display: flex;
+    background-color: #bde4fa; /* Lighter blue for container */
+    width: 80%;
+    height: 80%;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+/* Clock section styling - left column of the layout */
+.relogio {
+    flex: 2; /* Takes up 2 parts of available space */
+    display: flex;
+    flex-direction: column;
+    background-color: #c9e8f9; /* Slightly different blue shade for visual separation */
+    justify-content: center;
+    margin-left: 40px;
+    padding-left: 2%;
+    padding-right: 2%;
+    text-align: left;
+    box-sizing: border-box;
+    min-width: 0; /* Prevents flex item from overflowing */
+}
+
+/* Clock time display styling - shows current time */
+.clock {
+    color: #2f4858; /* Dark blue-gray color for contrast and readability */
+    font-size: 25px;
+    font-weight: bold;
+    text-align: left;
+    padding-bottom: 2px;
+    margin-top: 60px; /* Creates space at the top */
+}
+
+/* Date display styling - shows current date below the clock */
+.date {
+    color: #2f4858;
+    font-size: 15px;
+    text-align: left;
+    padding-bottom: 5%; /* Adds space before the logo */
+}
+
+/* Clock image styling - contains the application logo */
+.clock-image {
+    max-width: 70%; /* Responsive image sizing */
+    min-width: 50%;
+    display: block;
+    margin: 0 auto; /* Centers the image horizontally */
+}
+
+/* Right section styling - contains greeting and navigation */
+.right-section {
+    flex: 2; /* Equal width as the left section */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding-left: 50px; /* Creates space between sections */
+    text-align: left;
+    box-sizing: border-box;
+    min-width: 0; /* Prevents flex item from overflowing */
+}
+
+/* Heading styling in right section - welcome message */
+.right-section h1 {
+    color: #2f4858;
+    margin-bottom: 20px; /* Space between heading and buttons */
+}
+
+/* Button container styling - vertical arrangement of navigation buttons */
+.BT-1 {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Consistent spacing between buttons */
+}
+
+/* Button styling - for navigation to different calendar views */
+.BT-1 button {
+    background-color: #0077b6; /* Blue button color */
+    color: white; /* White text for contrast */
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer; /* Changes cursor to hand on hover */
+    transition: background-color 0.3s ease; /* Smooth color transition on hover */
+}
+
+/* Button hover effect - darkens button when user hovers */
+.BT-1 button:hover {
+    background-color: #005f8a; /* Darker blue on hover for visual feedback */
+}

@@ -1,0 +1,65 @@
+<!--
+ * Calendar Project - Main Page
+ * 
+ * This is the main landing page of the Calendar application that provides:
+ * - Real-time clock and date display
+ * - Navigation to different calendar views (day, week, month)
+ * - A welcoming interface with the application logo
+ * 
+ * The page is structured with a two-column layout: left side shows time information
+ * and logo, while the right side contains navigation buttons for different views.
+ * 
+ * Language: German (UI elements)
+ * 
+ * Dependencies:
+ * - index.css for styling
+ * - index.js for dynamic functionality (clock, date)
+ * - KalendarLogo.png for branding
+-->
+
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <!-- Meta tags for character encoding and responsive design -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Page title -->
+    <title>Layout</title>
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Clock section with date display and logo -->
+        <div class="relogio">
+            <!-- Dynamic clock element - updated by JavaScript in real-time -->
+            <div id="clock" class="clock"></div>
+            <!-- Dynamic date element - updated by JavaScript in real-time -->
+            <div id="date" class="date"></div>
+            <div>
+                <!-- Application logo - visual branding element -->
+                <img src="KalendarLogo.png" alt="Calendar Logo" class="clock-image">
+            </div>
+        </div>
+        <!-- Right section with greeting and navigation buttons -->
+        <div class="right-section">
+            <!-- Welcome message in German: "Hey! Nice that you're here!" -->
+            <h1>Hey! Schön das Du da Bist!</h1>
+            <!-- Navigation buttons for different calendar views -->
+            <nav class="BT-1">
+                <!-- Button for day view (Tag = Day in German) - default view -->
+                <button aria-label="View day">Tag</button>
+                <!-- Button for week view (Woche = Week in German) - redirects to week page -->
+                <button onclick="location.href='woche.html'" aria-label="View week">Woche</button>
+                <!-- Button for month view (Monat = Month in German) - redirects to month page -->
+                <button onclick="location.href='monat.html'" aria-label="View month">Monat</button>
+            </nav>
+        </div>
+    </div>
+    <!-- Link to JavaScript file that handles dynamic content (clock, date) -->
+    <script src="index.js"></script>
+</body>
+
+</html>
